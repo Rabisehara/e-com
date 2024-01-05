@@ -2,12 +2,11 @@
 include_once('../models/user.model.php');
 $data = file_get_contents("php://input");
 $dataObj = json_decode($data);
-
+$url = parse_url($_SERVER['REQUEST_URI']);
 
 $method = $_SERVER["REQUEST_METHOD"];
 switch ($method) {
     case "GET":
-        $url = parse_url($_SERVER['REQUEST_URI']);
         $user = new User();
         if (isset($url['query'])) {
             parse_str($url['query'], $params);
@@ -37,19 +36,30 @@ switch ($method) {
             echo json_encode(["status" => "ERR_OR", "massage" => "user name and password are mandatory"]);
         }
         break;
-    case "PUT":
-        echo json_encode(["status" => "Success", "massage" => "$method is allowed on this route"]);
+    case "UPDATE":
+        if (isset($url['query'])) {
+            parse_str($url['query'], $params);
+            $req_body = (array) $dataObj;
+            $user = new User();
+            $res = $user->updateUser("tbl_users", $req_body, $params['id']);
+            echo $res;
+        } else {
+            echo json_encode(["status" => "ERR_OR", "massage" => "You have to send user id as query param"]);
+        }
         break;
     case "DELETE":
         if ($dataObj->user_id != '') {
             $req_body = [
                 "id" => trim($dataObj->user_id)
             ];
-        }else{
-            
+            $user = new User();
+            $res = $user->deleteUser("tbl_users", $req_body);
+            echo $res;
+        } else {
+            echo json_encode(["massage" => "In Order to Delete an User You have to send the user_id through Requeste Body"]);
         }
         break;
     default:
-        echo json_encode(["status" => "ERR_OR", "massage" => "$method is not allowed on this route"]);
+        echo json_encode(["status" => "ERR_OR", "massage" => "$method method is not allowed on this route"]);
 }
 die;

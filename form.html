@@ -48,14 +48,15 @@
                 const { name, value } = i
                 formData[name] = value
             })
-            fetch('./api/controllers/user.controller.php?id=10', {
-                method: "GET",
-                // body: JSON.stringify({"id":2})
-            }).then((res) => {
-                return res.json()
-            }).then((data) => {
-                console.log(data)
-            })
+            try {
+                fetch('./api/controllers/user.controller.php').then((res) => {
+                    return res.json()
+                }).then((data) => {
+                    console.log(data)
+                })
+            } catch (error) {
+                console.log(error)
+            }
         })
 
     </script>
