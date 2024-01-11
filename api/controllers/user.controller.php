@@ -1,5 +1,4 @@
 <?php
-include_once('../models/user.model.php');
 $data = file_get_contents("php://input");
 $dataObj = json_decode($data);
 $url = parse_url($_SERVER['REQUEST_URI']);
@@ -7,7 +6,7 @@ $url = parse_url($_SERVER['REQUEST_URI']);
 $method = $_SERVER["REQUEST_METHOD"];
 switch ($method) {
     case "GET":
-        $user = new User();
+        $user = new User($connection, $date);
         if (isset($url['query'])) {
             parse_str($url['query'], $params);
             $res = $user->getAllUsers("tbl_users", $params);
@@ -26,7 +25,7 @@ switch ($method) {
                     "mobile" => trim($dataObj->mobile),
                     "email" => trim($dataObj->email),
                 ];
-                $user = new User();
+                $user = new User($connection, $date);
                 $res = $user->createUser("tbl_users", $req_body);
                 echo $res;
             } else {
@@ -40,7 +39,7 @@ switch ($method) {
         if (isset($url['query'])) {
             parse_str($url['query'], $params);
             $req_body = (array) $dataObj;
-            $user = new User();
+            $user = new User($connection, $date);
             $res = $user->updateUser("tbl_users", $req_body, $params['id']);
             echo $res;
         } else {
@@ -52,7 +51,7 @@ switch ($method) {
             $req_body = [
                 "id" => trim($dataObj->user_id)
             ];
-            $user = new User();
+            $user = new User($connection, $date);
             $res = $user->deleteUser("tbl_users", $req_body);
             echo $res;
         } else {

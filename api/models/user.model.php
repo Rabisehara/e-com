@@ -5,9 +5,9 @@ class User
     protected $conn;
     public $date;
 
-    function __construct()
+    function __construct($connection, $date)
     {
-        include_once('../config/connection.php');
+
         $this->conn = $connection;
         $this->date = $date;
     }

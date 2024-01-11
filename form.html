@@ -9,54 +9,26 @@
 </head>
 
 <body>
-    <form id="userForm">
-        <div class="container">
-            <div class="form-input m-1">
-                <div>
-                    <label for="user_name">User Name :</label>
+    <center>
+        <div class="container col-10">
+            <div>
+                <div class="label">
+
                 </div>
-                <input type="text" name="user_name" value="" class="form-control">
-            </div>
-            <div class="form-input m-1">
-                <div>
-                    <label for="password">Password :</label>
+                <div class="form-input mt-4">
+                    <input id="file" type="file" name="file" class="form-control" multiple>
                 </div>
-                <input type="password" name="password" value="" class="form-control">
             </div>
-            <div class="form-input m-1">
-                <div>
-                    <label for="mobile">Mobile No :</label>
-                </div>
-                <input type="text" name="mobile" value="" class="form-control">
-            </div>
-            <div class="form-input m-1">
-                <div>
-                    <label for="email">Email :</label>
-                </div>
-                <input class="form-control" type="email" name="email" value="">
-            </div>
-            <button class="btn btn-primary m-1" type="submit">SUBMIT</button>
+            <div class="container"></div>
+
         </div>
-    </form>
-    <script>
-        var form = document.querySelector("#userForm")
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const elements = Array.from(e.srcElement)
-            const formData = {}
-            elements.map((i) => {
-                const { name, value } = i
-                formData[name] = value
-            })
-            try {
-                fetch('./api/controllers/user.controller.php').then((res) => {
-                    return res.json()
-                }).then((data) => {
-                    console.log(data)
-                })
-            } catch (error) {
-                console.log(error)
-            }
+        <div class="container">
+            <!-- <img id="img" src="" alt="jpg"> -->
+        </div>
+    </center>
+    <script type="">
+        document.querySelector("#file").addEventListener('change', (e) => {
+           const files = document.querySelector("#file").files
         })
 
     </script>
