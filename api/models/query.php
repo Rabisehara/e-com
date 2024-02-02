@@ -20,12 +20,19 @@ function findAll($conn, ?string $tbl_name = "", ?array $where = [], ?string $sql
           } else {
                $sql = "SELECT * FROM $tbl_name";
           }
+     } else {
+          if (COUNT($where) > 0) {
+               foreach ($where as $k => $v) {
+                    $whercl .= "$k = '$v' and ";
+               }
+               $wherclf = rtrim($whercl, " and");
+               $sql . "WHERE $wherclf";
+          }
      }
      $res = $conn->query($sql);
      $data = $res->fetch_all(MYSQLI_ASSOC);
-     $data[0]['DIR'] = "uploads/profile/";
      // print_r($_SERVER);
-     return json_encode($data);
+     return $data;
 }
 function findOne($conn, ?string $tbl_name = "", ?array $reqBody = [], ?string $sql = "")
 {
@@ -45,9 +52,9 @@ function findOne($conn, ?string $tbl_name = "", ?array $reqBody = [], ?string $s
      $rows = $res->num_rows;
      if ($rows > 0) {
           $data = $res->fetch_all(MYSQLI_ASSOC);
-          return json_encode($data);
+          return $data;
      } else {
-          return json_encode(["error" => "not found!!"]);
+          return ["error" => "not found!!"];
      }
 }
 function create($conn, ?string $tbl_name = "", ?array $reqBody = [], ?string $sql = "")
@@ -61,9 +68,9 @@ function create($conn, ?string $tbl_name = "", ?array $reqBody = [], ?string $sq
      $sql = "INSERT INTO $tbl_name SET $values";
      $res = $conn->query($sql);
      if ($res) {
-          return json_encode(['status' => 200, 'inserted_id' => mysqli_insert_id($conn)]);
+          return ['status' => 200, 'inserted_id' => mysqli_insert_id($conn)];
      } else {
-          return json_encode(['status' => 500, 'massage' => "something went wrong"]);
+          return ['status' => 500, 'massage' => "something went wrong"];
      }
 }
 function delete_($conn, ?string $tbl_name = "", $id = '', ?string $sql = "")
@@ -71,9 +78,9 @@ function delete_($conn, ?string $tbl_name = "", $id = '', ?string $sql = "")
      $sql = "DELETE FROM $tbl_name WHERE id=$id";
      $res = $conn->query($sql);
      if ($res) {
-          return json_encode(["status"=> 200,""]);
+          return ["status" => 200, ""];
      } else {
-          return json_encode(["status"=> 500, ""=> ""]);
+          return ["status" => 500, "" => ""];
      }
 }
 function update($conn, ?string $tbl_name = "", ?array $reqBody = [], $id = '', ?string $sql = "")
@@ -87,8 +94,8 @@ function update($conn, ?string $tbl_name = "", ?array $reqBody = [], $id = '', ?
      // return json_encode(["body"=>$reqBody , "sql"=>$sql]);
      $res = $conn->query($sql);
      if ($res) {
-          return json_encode(["status" => 200]);
+          return ["status" => 200];
      } else {
-          return json_encode(["status" => 500, "massage" => "something went wrong"]);
+          return ["status" => 500, "massage" => "something went wrong"];
      }
 }

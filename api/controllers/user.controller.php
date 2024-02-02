@@ -3,7 +3,7 @@
 switch ($method) {
       case 'GET':
             $data = findAll($conn, "tbl_users", $params, "");
-            echo $data;
+            echo json_encode($data);
             break;
       case 'POST':
             if ($login) {
@@ -35,9 +35,8 @@ switch ($method) {
                         $values['email'] = $email;
                         $values['created_at'] = $date->format('Y-m-d H:i:s');
                         $res =  create($conn, "tbl_users", $values, "");
-                        $resp = json_decode($res, true);
-                        if ($resp["status"] == 200) {
-                              echo $res;
+                        if ($res["status"] == 200) {
+                              echo json_encode($res);
                         } else {
                               removeFile("uploads/profile/", $file_name);
                         }
@@ -53,12 +52,12 @@ switch ($method) {
             }, ARRAY_FILTER_USE_KEY);
             $values['updated_at'] = $date->format('Y-m-d H:i:s');
             $data = update($conn, "tbl_users", $values, $s_id, "");
-            echo $data;
+            echo json_encode($data);
             break;
       case "DELETE":
             $s_id = $reqBody["delete_id"];
             $res = delete_($conn, "tbl_users", $s_id, "");
-            echo $res;
+            echo json_encode($res);
             break;
 
       default:

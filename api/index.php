@@ -44,7 +44,7 @@ switch ($path) {
                   echo json_encode(["massage" => "$method Method is not allowed on this route"]);
             }
             break;
-      case "product":
+      case "/product":
             if (in_array($method, ["GET", "POST", "UPDATE", "DELETE"])) {
                   include "./controllers/product.controller.php";
             } else {

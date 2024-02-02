@@ -38,27 +38,24 @@
             let email = document.querySelector("#email").value;
             let update_id = 1;
             // console.log()
-            fetch('./api/user',
-            {
-                method: "UPDATE",
-                body: JSON.stringify({
-                    update_id,
-                    full_name,
-                    user_name,
-                    password,
-                    // base64IMG,
-                    mobile,
-                    email
-                })
-            }
+            fetch('./api/product'
+            // {
+            //     method: "UPDATE",
+            //     body: JSON.stringify({
+            //         update_id,
+            //         full_name,
+            //         user_name,
+            //         password,
+            //         // base64IMG,
+            //         mobile,
+            //         email
+            //     })
+            // }
             ).then((res) => {
-                return res.json()
-            }).then((data) => {
-                console.log(data.sql)
+                return res.json();
+            }).then((res)=>{
+                console.log(res)
             })
-            // .then((fd)=>{
-            //     document.querySelector("#preview").src = "http://localhost/Rabilal/PROJECT/e-com/api/"+fd[0]['DIR']+fd.profile
-            // })
         })
         document.querySelector("#profile").addEventListener('change', (e) => {
             const file = e.target.files[0]
