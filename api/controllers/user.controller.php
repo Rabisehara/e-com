@@ -1,64 +1,67 @@
 <?php
-$data = file_get_contents("php://input");
-$dataObj = json_decode($data);
-$url = parse_url($_SERVER['REQUEST_URI']);
 
-$method = $_SERVER["REQUEST_METHOD"];
 switch ($method) {
-    case "GET":
-        $user = new User($connection, $date);
-        if (isset($url['query'])) {
-            parse_str($url['query'], $params);
-            $res = $user->getAllUsers("tbl_users", $params);
-        } else {
-            $res = $user->getAllUsers("tbl_users");
-        }
-
-        echo $res;
-        break;
-    case "POST":
-        if ($dataObj->user_name != '' && $dataObj->password != '') {
-            if ($dataObj->mobile != "" || $dataObj->email != "") {
-                $req_body = [
-                    "user_name" => trim($dataObj->user_name),
-                    "password" => trim($dataObj->password),
-                    "mobile" => trim($dataObj->mobile),
-                    "email" => trim($dataObj->email),
-                ];
-                $user = new User($connection, $date);
-                $res = $user->createUser("tbl_users", $req_body);
-                echo $res;
+      case 'GET':
+            $data = findAll($conn, "tbl_users", $params, "");
+            echo $data;
+            break;
+      case 'POST':
+            if ($login) {
+                  $user_name = trim($reqBody['user_name']);
+                  $password = trim($reqBody['password']);
+                  if ($user_name != '' && $password != '') {
+                        findOne($conn, 'tbl_users', $reqBody, '');
+                  } else {
+                        echo "Please provid valid input";
+                  }
             } else {
-                echo json_encode(["status" => "ERR_OR", "massage" => "you must have to provide either Mobile Number or Email ID"]);
+                  $userName = trim($reqBody["user_name"]);
+                  $full_name = trim($reqBody["full_name"]);
+                  $password = trim($reqBody["password"]);
+                  $mobile = trim($reqBody["mobile"]);
+                  $email = trim($reqBody["email"]);
+                  $profile = trim($reqBody["base64IMG"]);
+                  if ($userName != "" && $password != "" && $email != "" && $full_name != '') {
+                        if ($profile != '') {
+                              $file_name = handleFile("uploads/profile/", $profile);
+                        } else {
+                              $file_name = "profile.png";
+                        }
+                        $values['profile'] = $file_name;
+                        $values['full_name'] = $full_name;
+                        $values['user_name'] = $userName;
+                        $values['password'] = $password;
+                        $values['mobile'] = $mobile;
+                        $values['email'] = $email;
+                        $values['created_at'] = $date->format('Y-m-d H:i:s');
+                        $res =  create($conn, "tbl_users", $values, "");
+                        $resp = json_decode($res, true);
+                        if ($resp["status"] == 200) {
+                              echo $res;
+                        } else {
+                              removeFile("uploads/profile/", $file_name);
+                        }
+                  } else {
+                  }
             }
-        } else {
-            echo json_encode(["status" => "ERR_OR", "massage" => "user name and password are mandatory"]);
-        }
-        break;
-    case "UPDATE":
-        if (isset($url['query'])) {
-            parse_str($url['query'], $params);
-            $req_body = (array) $dataObj;
-            $user = new User($connection, $date);
-            $res = $user->updateUser("tbl_users", $req_body, $params['id']);
+
+            break;
+      case 'UPDATE':
+            $s_id = $reqBody['update_id'];
+            $values = array_filter($reqBody, function ($k) {
+                  return $k != 'update_id';
+            }, ARRAY_FILTER_USE_KEY);
+            $values['updated_at'] = $date->format('Y-m-d H:i:s');
+            $data = update($conn, "tbl_users", $values, $s_id, "");
+            echo $data;
+            break;
+      case "DELETE":
+            $s_id = $reqBody["delete_id"];
+            $res = delete_($conn, "tbl_users", $s_id, "");
             echo $res;
-        } else {
-            echo json_encode(["status" => "ERR_OR", "massage" => "You have to send user id as query param"]);
-        }
-        break;
-    case "DELETE":
-        if ($dataObj->user_id != '') {
-            $req_body = [
-                "id" => trim($dataObj->user_id)
-            ];
-            $user = new User($connection, $date);
-            $res = $user->deleteUser("tbl_users", $req_body);
-            echo $res;
-        } else {
-            echo json_encode(["massage" => "In Order to Delete an User You have to send the user_id through Requeste Body"]);
-        }
-        break;
-    default:
-        echo json_encode(["status" => "ERR_OR", "massage" => "$method method is not allowed on this route"]);
+            break;
+
+      default:
+            # code...
+            break;
 }
-die;

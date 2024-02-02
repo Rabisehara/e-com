@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <center>
+        <pre>
+            <input type="text" id="full_name" name="full_name" value="">
+            <br>
+            <input type="text" id="user_name" name="user_name" value="">
+            <br>
+            <input type="text" id="password" name="password" value="">
+            <br>
+            <input type="text" id="mobile" name="mobile" value="">
+            <br>
+            <input type="text" id="email" name="email" value="">
+            <br>
+            <input type="file" id="profile" name="profile" value="">
+            <br>
+            <button id="send">SUBMIT</button>
+            <img id="preview" src="" alt="" srcset="">
+        </pre>
+    </center>
+    <script>
+        const btn = document.querySelector("#send")
+        let base64IMG ='';
+
+        btn.addEventListener('click', () => {
+            let full_name = document.querySelector("#full_name").value;
+            let user_name = document.querySelector("#user_name").value;
+            let password = document.querySelector("#password").value;
+            let mobile = document.querySelector("#mobile").value;
+            let email = document.querySelector("#email").value;
+            let update_id = 1;
+            // console.log()
+            fetch('./api/user',
+            {
+                method: "UPDATE",
+                body: JSON.stringify({
+                    update_id,
+                    full_name,
+                    user_name,
+                    password,
+                    // base64IMG,
+                    mobile,
+                    email
+                })
+            }
+            ).then((res) => {
+                return res.json()
+            }).then((data) => {
+                console.log(data.sql)
+            })
+            // .then((fd)=>{
+            //     document.querySelector("#preview").src = "http://localhost/Rabilal/PROJECT/e-com/api/"+fd[0]['DIR']+fd.profile
+            // })
+        })
+        document.querySelector("#profile").addEventListener('change', (e) => {
+            const file = e.target.files[0]
+            let reader = new FileReader()
+
+            reader.readAsDataURL(file)
+            reader.addEventListener('load', (e) => {
+                base64IMG = e.target.result
+                document.querySelector("#preview").src = e.target.result
+            })
+        })
+    </script>
+</body>
+
+</html>
